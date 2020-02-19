@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "tfar.reciperandomizer.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "reciperandomizer.refmap.json",
+  "mixins": [
+    "RecipeManagerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}
