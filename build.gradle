@@ -38,7 +38,7 @@ minecraft {
     runs {
         client {
             workingDirectory project.file('run')
-            arg '-mixin.config=reciperandomizer.mixins.json'
+            arg "-mixin.config="+archivesBaseName+".mixins.json"
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
@@ -52,7 +52,7 @@ minecraft {
 
         server {
             workingDirectory project.file('run')
-            arg '-mixin.config=reciperandomizer.mixins.json'
+            arg "-mixin.config="+archivesBaseName+".mixins.json"
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
@@ -91,7 +91,7 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}" //21
 
-    compile 'org.spongepowered:mixin:0.8-SNAPSHOT'
+    compile 'org.spongepowered:mixin:0.8'
 
 
     // You may put jars on which you depend on in ./libs or you may define them like so..
