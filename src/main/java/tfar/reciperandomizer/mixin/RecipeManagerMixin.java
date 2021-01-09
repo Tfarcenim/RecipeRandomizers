@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import tfar.reciperandomizer.MixinHooks;
+import tfar.reciperandomizer.RecipeRandomizer;
 
 import java.util.Map;
 
@@ -21,7 +22,8 @@ public class RecipeManagerMixin {
 	@Shadow private Map<IRecipeType<?>, Map<ResourceLocation, IRecipe<?>>> recipes;
 
 	@Inject(method = "apply",at = @At("RETURN"))
-	public void scrambleRecipes(Map<ResourceLocation, JsonObject> splashList, IResourceManager resourceManagerIn, IProfiler profilerIn, CallbackInfo ci){
+	public void scrambleRecipes(Map<ResourceLocation, JsonObject> splashList, IResourceManager resourceManagerIn, IProfiler profilerIn, CallbackInfo ci) {
+		if (RecipeRandomizer.ServerConfig.randomToggle.get())
 		recipes = MixinHooks.scramble(recipes);
 	}
 }
