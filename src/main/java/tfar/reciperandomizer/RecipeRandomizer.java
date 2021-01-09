@@ -1,22 +1,31 @@
 package tfar.reciperandomizer;
 
 import com.google.common.collect.Lists;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.command.CommandSource;
 import net.minecraft.resources.ResourcePackList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.storage.IServerConfiguration;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.glfw.GLFW;
+import tfar.reciperandomizer.network.C2SToggleRandomCraftingPacket;
+import tfar.reciperandomizer.network.PacketHandler;
 
 import java.util.Collection;
 
@@ -31,7 +40,13 @@ public class RecipeRandomizer {
 
     public RecipeRandomizer() {
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::reload);
+        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        bus.addListener(this::configReload);
+        bus.addListener(this::common);
+        if (FMLEnvironment.dist.isClient()) {
+            MinecraftForge.EVENT_BUS.addListener(Client::keyPress);
+            bus.addListener(Client::keybind);
+        }
     }
 
     public static final ServerConfig SERVER;
@@ -67,17 +82,39 @@ public class RecipeRandomizer {
         return collection;
     }
 
+    private void common(FMLCommonSetupEvent e) {
+        PacketHandler.registerMessages(MODID);
+    }
 
-    private void reload(ModConfig.Reloading e) {
+    private void configReload(ModConfig.Reloading e) {
         if (e.getConfig().getModId().equals(MODID)) {
-            MinecraftServer minecraftserver = ServerLifecycleHooks.getCurrentServer();
-            if (minecraftserver != null) {
-                ResourcePackList resourcepacklist = minecraftserver.getResourcePacks();
-                IServerConfiguration iserverconfiguration = minecraftserver.getServerConfiguration();
-                Collection<String> collection = resourcepacklist.func_232621_d_();
-                Collection<String> collection1 = func_241058_a_(resourcepacklist, iserverconfiguration, collection);
-                minecraftserver.getCommandSource().sendFeedback(new TranslationTextComponent("commands.reload.success"), true);
-                func_241062_a_(collection1, minecraftserver.getCommandSource());
+            reload();
+        }
+    }
+
+    public static void reload() {
+        MinecraftServer minecraftserver = ServerLifecycleHooks.getCurrentServer();
+        if (minecraftserver != null) {
+            ResourcePackList resourcepacklist = minecraftserver.getResourcePacks();
+            IServerConfiguration iserverconfiguration = minecraftserver.getServerConfiguration();
+            Collection<String> collection = resourcepacklist.func_232621_d_();
+            Collection<String> collection1 = func_241058_a_(resourcepacklist, iserverconfiguration, collection);
+            minecraftserver.getCommandSource().sendFeedback(new TranslationTextComponent("commands.reload.success"), true);
+            func_241062_a_(collection1, minecraftserver.getCommandSource());
+        }
+    }
+
+    public static class Client {
+
+        public static final KeyBinding TOGGLE = new KeyBinding("toggle", GLFW.GLFW_KEY_Y,MODID);
+
+        private static void keybind(FMLClientSetupEvent e) {
+            ClientRegistry.registerKeyBinding(TOGGLE);
+        }
+
+        private static void keyPress(InputEvent.KeyInputEvent e) {
+            while (TOGGLE.isPressed()) {
+                PacketHandler.INSTANCE.sendToServer(new C2SToggleRandomCraftingPacket());
             }
         }
     }
