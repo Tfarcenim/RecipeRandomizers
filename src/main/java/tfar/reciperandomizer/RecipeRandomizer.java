@@ -17,8 +17,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import tfar.reciperandomizer.network.PacketHandler;
 
 import java.util.Collection;
@@ -51,10 +49,10 @@ public class RecipeRandomizer {
 
     //private static final Logger field_241057_a_ = LogManager.getLogger();
 
-    public static void func_241062_a_(Collection<String> p_241062_0_, CommandSource p_241062_1_) {
-        p_241062_1_.getServer().func_240780_a_(p_241062_0_).exceptionally((p_241061_1_) -> {
-            //field_241057_a_.warn("Failed to execute reload", p_241061_1_);
-            p_241062_1_.sendErrorMessage(new TranslationTextComponent("commands.reload.failure"));
+    public static void func_241062_a_(Collection<String> strings, CommandSource source) {
+        source.getServer().func_240780_a_(strings).exceptionally((throwable) -> {
+            //field_241057_a_.warn("Failed to execute reload", throwable);
+            source.sendErrorMessage(new TranslationTextComponent("commands.reload.failure"));
             return null;
         });
     }
@@ -97,13 +95,13 @@ public class RecipeRandomizer {
 
     public static class ServerConfig {
 
-        public static ForgeConfigSpec.BooleanValue randomToggle;
+        public static ForgeConfigSpec.BooleanValue random_crafting;
 
         public ServerConfig(ForgeConfigSpec.Builder builder) {
             builder.push("server");
-            randomToggle = builder.
+            random_crafting = builder.
                     comment("controls whether or not random crafting is active")
-                    .define("active", true);
+                    .define("random_crafting", true);
             builder.pop();
         }
     }

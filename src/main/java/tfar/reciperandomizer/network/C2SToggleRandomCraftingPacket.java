@@ -11,7 +11,7 @@ public class C2SToggleRandomCraftingPacket {
   }
 
   public void handle(Supplier<NetworkEvent.Context> ctx) {
-    RecipeRandomizer.ServerConfig.randomToggle.set(!RecipeRandomizer.ServerConfig.randomToggle.get());
+    RecipeRandomizer.ServerConfig.random_crafting.set(!RecipeRandomizer.ServerConfig.random_crafting.get());
     RecipeRandomizer.reload();
   }
 }

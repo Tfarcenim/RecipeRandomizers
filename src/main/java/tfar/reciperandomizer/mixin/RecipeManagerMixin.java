@@ -23,7 +23,7 @@ public class RecipeManagerMixin {
 
 	@Inject(method = "apply",at = @At("RETURN"))
 	public void scrambleRecipes(Map<ResourceLocation, JsonObject> splashList, IResourceManager resourceManagerIn, IProfiler profilerIn, CallbackInfo ci) {
-		if (RecipeRandomizer.ServerConfig.randomToggle.get())
+		if (RecipeRandomizer.ServerConfig.random_crafting.get())
 		recipes = MixinHooks.scramble(recipes);
 	}
 }

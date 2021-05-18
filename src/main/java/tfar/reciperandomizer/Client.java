@@ -13,7 +13,7 @@ public class Client {
     public static KeyBinding TOGGLE;
 
     public static void keybind(FMLClientSetupEvent e) {
-        TOGGLE = new KeyBinding("toggle", GLFW.GLFW_KEY_Y, RecipeRandomizer.MODID);
+        TOGGLE = new KeyBinding("toggle_recipes", GLFW.GLFW_KEY_Y, RecipeRandomizer.MODID);
         ClientRegistry.registerKeyBinding(TOGGLE);
     }
 
