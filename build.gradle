@@ -3,7 +3,7 @@ buildscript {
         maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
         mavenCentral()
-        maven {url='https://dist.creeper.host/Sponge/maven'}
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
 
     }
     dependencies {
@@ -16,7 +16,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = "${mod_version}"
+version = "${mc_version}-${mod_version}"
 group = "com.tfar.${modid}" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "${modid}"
 
@@ -28,7 +28,7 @@ minecraft {
     // stable_#            Stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: "snapshot", version: "${mapping}-1.16.3"
+    mappings channel: "snapshot", version: "${mapping}"
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
     //accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -75,11 +75,8 @@ repositories{
     maven {
         // location of a maven mirror for JEI files, as a fallback
         name = "ModMaven"
-        url = "https://modmaven.k-4u.nl"
+        url = "https://modmaven.dev/"
     }
-    jcenter()
-    mavenCentral()
-
 }
 
 dependencies {
